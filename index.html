@@ -7,9 +7,10 @@
         <script>window.NAF || document.write('<script src="https://unpkg.com/networked-aframe/dist/networked-aframe.min.js">\x3C/script>')</script>
         <script src="https://unpkg.com/aframe-particle-system-component@1.0.5/dist/aframe-particle-system-component.min.js"></script>
         <script src="https://unpkg.com/aframe-randomizer-components@^3.0.1/dist/aframe-randomizer-components.min.js"></script>
-        <script src="https://unpkg.com/aframe-event-set-component@3.x.x/dist/aframe-event-set-component.min.js"></script>
-        <script src="https://unpkg.com/aframe-template-component@3.x.x/dist/aframe-template-component.min.js"></script>
-        <script src="https://unpkg.com/aframe-layout-component@3.x.x/dist/aframe-layout-component.min.js"></script>
+        <script src="https://unpkg.com/aframe-proxy-event-component@2.1.0/dist/aframe-proxy-event-component.min.js"></script>
+        <script src="https://unpkg.com/aframe-event-set-component@5.x.x/dist/aframe-event-set-component.min.js"></script>
+        <script src="https://unpkg.com/aframe-template-component@3.2.1/dist/aframe-template-component.min.js"></script>
+        <script src="https://unpkg.com/aframe-layout-component@5.x.x/dist/aframe-layout-component.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/nunjucks/2.3.0/nunjucks.min.js"></script>
         <script src="components/spawn-in-circle.js"></script>
         <script src="components/template-changer.js"></script>
@@ -23,7 +24,23 @@
             adapter: wseasyrtc;
         ">
             <a-assets>
-                <img id="grid" src="https://img.gs/bbdkhfbzkk/stretch/https://i.imgur.com/25P1geh.png" crossorigin="anonymous">
+                <img id="mars" crossorigin="anonymous" src="img/mars.jpg">
+                <img id="cosmos" crossorigin="anonymous" src="img/eso0932a.jpg">
+                <img id="tumopark" crossorigin="anonymous" src="img/tumopark_1.jpg">
+                <audio id="music-loop" src="audio/tsitsernakaberd-loop.ogg" preload="auto"></audio>        
+                <audio id="click-sound" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg"></audio>
+        
+                <!-- Image link template to be reused. -->
+                <script id="link" type="text/html">
+                    <a-entity class="link2"
+                    geometry="primitive: sphere; height: 1; width: 1"
+                    material="shader: flat; src: ${thumb}"
+                    event-set__mouseenter="scale: 1.2 1.2 1.2"
+                    event-set__mouseleave="scale: 1 1 1"
+                    event-set__click="_target: #image-360; _delay: 300; material.src: ${src}"
+                    proxy-event="event: click; to: #image-360; as: fade"
+                    sound="on: click; src: #click-sound"></a-entity>
+                </script>
 
                 <template id="avatar-template">
                     <a-entity class="avatar">
@@ -101,55 +118,33 @@
                     visible="false"
                     random-color
                 ></a-sphere>
-                <a-cursor></a-cursor>
+                <a-cursor
+                    fuse='true'
+                    fuse-timeout='1500'
+                ></a-cursor>
             </a-camera>
 
             <a-entity
+                id="links-src-group1"
+                template="src: scenes/links/tumopark.html"
                 position="0 0 0"
-                geometry="primitive: plane; width: 10000; height: 10000;"
-                rotation="-90 0 0"
-                material="src: #grid; repeat: 10000 10000; transparent: true; metalness:0.6; roughness: 0.4;"
             ></a-entity>
-
+  
             <a-entity
-                light="color: #ccccff; intensity: 1; type: ambient;"
-                visible=""
-            ></a-entity>
-
-            <a-entity
-                light="color: #ffaaff; intensity: 1.5"
-                position="5 5 5"
-            ></a-entity>
-
-            <a-entity id="links" layout="type: line; margin: 1.5" position="0 1 -4">
-                <a-entity
-                    class="link"
-                    template="src: #link"
-                    data-src="scenes/spheres.html"
-                ></a-entity>
-
-                <a-entity
-                    class="link"
-                    template="src: #link"
-                    data-src="scenes/boxes.html"
-                    position="0 0 -3"
-                ></a-entity>
-            </a-entity>
-
-            <a-entity
-                id="template-src"
-                template="src: scenes/spheres.html"
-                position="0 0 -8"
+                id="template-src-group1"
+                template="src: scenes/tumopark.html"
+                position="0 0 0"
             ></a-entity>
 
             <a-sky
-                id="mask"
-                color="#D7C1E0"
-                animation__fade="property: components.material.material.color; type: color; from: #D7C1E0; to: #000; dur: 200; startEvents: fade"
-                animation__fadeback="property: components.material.material.color; type: color; from: #000; to: #D7C1E0; dur: 200; startEvents: animationcomplete__fade"
+                id="image-360"
+                radius="10"
+                src="#tumopark"
+                animation__fade="property: components.material.material.color; type: color; from: #FFF; to: #000; dur: 300; startEvents: fade"
+                animation__fadeback="property: components.material.material.color; type: color; from: #000; to: #FFF; dur: 300; startEvents: animationcomplete__fade"
             ></a-sky>
 
-            <!-- <a-sky rotation="0 -90 0" color="#000"></a-sky> -->
+            <a-entity sound="src: #music-loop; loop:true; autoplay:true; "></a-entity>
         </a-scene>
 
         <script>
